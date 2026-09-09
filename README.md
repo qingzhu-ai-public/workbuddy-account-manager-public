@@ -46,6 +46,10 @@
 
 ## 截图
 
+![青竹 Buddy 主界面：多账号列表、批量签到与一键切换](assets/product-screenshot.png)
+
+<p align="center"><sub>多账号列表 · 批量签到 · 积分与可用性一览 · 一键切换客户端登录</sub></p>
+
 > 完整产品预览见 [产品官网](https://qingzhu-ai-public.github.io/workbuddy-account-manager-public/)。
 
 ---
