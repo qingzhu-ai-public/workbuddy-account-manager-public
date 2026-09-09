@@ -6,13 +6,13 @@
 📦 **本仓库仅用于产品介绍与下载（公开仓库，不含源码）。**
 源码仓库为私有，本仓库所有安装包由私有仓的 GitHub Actions 自动推送过来，版本号完全同步。
 
-👉 **[产品官网](https://qingzhu-ai-office.github.io/workbuddy-account-manager-public/)** · **[全部 Releases](https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases)**
+👉 **[产品官网](https://qingzhu-ai-public.github.io/workbuddy-account-manager-public/)** · **[全部 Releases](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases)**
 
 ---
 
 ## 下载
 
-访问 [Releases 页](https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases) 下载对应平台的安装包：
+访问 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases) 下载对应平台的安装包：
 
 | 平台 | 推荐产物 | 备注 |
 |---|---|---|
@@ -46,9 +46,7 @@
 
 ## 截图
 
-![主界面预览](https://qingzhu-ai-office.github.io/workbuddy-account-manager-public/index.html)
-
-> 完整产品预览见 [产品官网](https://qingzhu-ai-office.github.io/workbuddy-account-manager-public/)。
+> 完整产品预览见 [产品官网](https://qingzhu-ai-public.github.io/workbuddy-account-manager-public/)。
 
 ---
 
