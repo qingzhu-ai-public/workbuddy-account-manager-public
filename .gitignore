@@ -1,0 +1,30 @@
+# Build 输出与产物
+node_modules/
+dist/
+release/
+
+# 测试/调试脚本
+_test_*.js
+_*.py
+_check*.py
+_extract*
+_make*
+*.log
+
+# 自动备份
+_cb_*.json
+_cb_*.log
+_cb_scan*
+
+# 项目模板（公开仓用不到）
+prototypes/
+design-proposals/
+devnotes/
+build/        # icon.png 源文件，公开仓不需要
+
+# 文档
+docs/
+
+# 临时
+*.tmp
+.DS_Store

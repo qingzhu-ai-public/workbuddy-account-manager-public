@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="zh-CN" data-page-node-id="19klCDg6u82DKg8meyXB8W">
+<head data-page-node-id="s02I9zwLnlSDkTvUhIFJgk">
+<meta charset="utf-8" data-page-node-id="W7zkOq4p2gktJ9COTcOnvT">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="NpDEtigvbrMhkTNJBZJYBx">
+<title>青竹 Buddy · WorkBuddy / CodeBuddy 多账号管理</title>
+<meta name="description" content="青竹 Buddy：Windows / macOS / Linux 桌面小工具，批量管理 WorkBuddy 与 CodeBuddy 多账号 —— 批量签到、查积分、一键切换客户端账号。" data-page-node-id="nPzr4LDdG2vtprOFtl9fpX">
+<link rel="icon" href="assets/qingzhu.jpg" data-page-node-id="MQY3mRNWebMCx2ar6jXGaA">
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg:#f6f6f3; --ink:#161613; --hair:#dcdcd4; --soft:#e9e9e3;
+    --mut:#70706a; --dim:#9a9a92; --red:#d92d20; --accent:#1f8a5a;
+  }
+  body{
+    background:var(--bg); color:var(--ink);
+    font:13px/1.55 "Inter","Helvetica Neue",Arial,"Noto Sans SC","Microsoft YaHei",sans-serif;
+    min-width:1060px;
+  }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  .topline{ height:6px; background:var(--ink); }
+  .frame{ padding:0 26px; }
+
+  /* ===== 顶栏 ===== */
+  .top{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; padding:22px 0 16px; border-bottom:2px solid var(--ink); }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand img{ width:42px; height:42px; object-fit:contain; }
+  .brand h1{ font-size:26px; font-weight:800; letter-spacing:-.6px; line-height:1.1; }
+  .brand h1 i{ font-style:normal; color:var(--dim); font-weight:600; font-size:18px; }
+  .brand p{ font-size:10.5px; letter-spacing:2.4px; text-transform:uppercase; color:var(--mut); margin-top:5px; }
+  .nav{ display:flex; gap:8px; align-items:center; }
+  .nav a{ font-size:11px; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border:1px solid var(--ink); font-weight:700; }
+  .nav a:hover{ background:var(--ink); color:#fff; }
+  .nav .repo{ background:var(--ink); color:#fff; }
+  .nav .repo:hover{ background:#000; }
+
+  /* ===== Hero ===== */
+  .hero{ display:grid; grid-template-columns: 1.05fr 1fr; gap:32px; padding:48px 0 36px; border-bottom:1px solid var(--ink); align-items:start; }
+  .hero-l h2{ font-size:54px; font-weight:800; line-height:1.05; letter-spacing:-1.4px; }
+  .hero-l h2 em{ font-style:normal; color:var(--dim); }
+  .hero-l .sub{ font-size:14px; color:var(--mut); margin-top:18px; max-width:520px; }
+  .hero-l .meta{ display:flex; gap:18px; margin-top:22px; font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--mut); }
+  .hero-l .meta b{ color:var(--ink); font-weight:700; margin-right:5px; }
+  .hero-l .cta{ display:flex; gap:10px; margin-top:28px; flex-wrap:wrap; }
+  .btn{ padding:11px 18px; border:1px solid var(--ink); background:transparent; color:var(--ink); font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; display:inline-flex; align-items:center; gap:8px; }
+  .btn:hover{ background:var(--ink); color:#fff; }
+  .btn.primary{ background:var(--ink); color:#fff; }
+  .btn.primary:hover{ background:#000; }
+  .btn small{ font-weight:600; opacity:.7; font-size:10px; }
+
+  /* ===== 下载卡片（核心：自动从 Releases 拉最新版本） ===== */
+  .download-card{
+    border:1.5px solid var(--ink); padding:18px 18px 14px; background:#fff;
+  }
+  .download-card .lab{ font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--mut); font-weight:700; }
+  .download-card .ver{ font-size:32px; font-weight:800; letter-spacing:-.6px; margin-top:2px; font-variant-numeric:tabular-nums; }
+  .download-card .ver .tag{ font-size:11px; color:var(--mut); margin-left:8px; font-weight:600; }
+  .download-card .date{ font-size:11px; color:var(--dim); margin-top:2px; }
+  .download-card .date i{ font-style:normal; color:var(--accent); }
+  .pl{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .pl-row{ display:grid; grid-template-columns: 92px 1fr auto; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--hair); }
+  .pl-row:first-child{ border-top:1px solid var(--ink); }
+  .pl-row .os{ font-size:10px; letter-spacing:1.8px; text-transform:uppercase; font-weight:700; color:var(--ink); }
+  .pl-row .os i{ color:var(--dim); font-weight:600; font-style:normal; margin-left:4px; }
+  .pl-row .pick{ font-size:11px; color:var(--mut); }
+  .pl-row .pick b{ color:var(--ink); font-weight:700; }
+  .pl-row .dl-btn{ font-size:11px; font-weight:700; letter-spacing:1.2px; padding:7px 14px; border:1px solid var(--ink); background:transparent; color:var(--ink); text-transform:uppercase; }
+  .pl-row .dl-btn:hover{ background:var(--ink); color:#fff; }
+  .pl-row .dl-btn.disabled{ opacity:.45; cursor:not-allowed; }
+  .fallback{ font-size:11px; color:var(--mut); margin-top:12px; padding-top:12px; border-top:1px dashed var(--hair); }
+  .fallback a{ color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
+
+  /* ===== 数据栏 ===== */
+  .stats{ display:grid; grid-template-columns: repeat(4, 1fr); border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+  .stat{ padding:18px 22px 16px; border-left:1px solid var(--hair); }
+  .stat:first-child{ border-left:none; }
+  .stat .lab{ font-size:9.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--mut); display:flex; gap:6px; align-items:center; }
+  .stat .lab i{ width:7px; height:7px; border-radius:50%; background:var(--ink); flex-shrink:0; }
+  .stat .lab i.cb{ border-radius:0; transform:rotate(45deg); }
+  .stat .val{ font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.4px; margin-top:4px; }
+  .stat .val small{ font-size:11px; font-weight:600; color:var(--mut); }
+  .stat .note{ font-size:11px; color:var(--dim); margin-top:2px; }
+
+  /* ===== 章节通用 ===== */
+  section{ padding:56px 0; border-bottom:1px solid var(--ink); }
+  .sec-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; gap:24px; }
+  .sec-head h3{ font-size:32px; font-weight:800; letter-spacing:-.8px; line-height:1.1; }
+  .sec-head h3 em{ font-style:normal; color:var(--dim); }
+  .sec-head .right{ font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--mut); text-align:right; }
+  .sec-head .right b{ color:var(--ink); display:block; font-size:11px; margin-top:2px; }
+
+  /* ===== 特性 ===== */
+  .features{ display:grid; grid-template-columns: repeat(3, 1fr); gap:0; border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+  .feat{ padding:22px 22px 20px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+  .feat .idx{ font-size:10px; letter-spacing:1.8px; text-transform:uppercase; color:var(--dim); font-weight:700; margin-bottom:6px; font-variant-numeric:tabular-nums; }
+  .feat .ttl{ font-size:16px; font-weight:800; letter-spacing:-.3px; }
+  .feat .desc{ font-size:12.5px; color:var(--mut); margin-top:6px; line-height:1.6; }
+
+  /* ===== 预览 ===== */
+  .preview{ display:grid; grid-template-columns: 1.35fr 1fr; gap:24px; }
+  .preview-img{ border:1.5px solid var(--ink); background:#fff; padding:0; overflow:hidden; }
+  .preview-img .ph{ padding:14px 18px; border-bottom:1px solid var(--ink); display:flex; justify-content:space-between; align-items:center; background:var(--soft); }
+  .preview-img .ph .dots{ display:flex; gap:5px; }
+  .preview-img .ph .dots i{ width:9px; height:9px; border-radius:50%; background:var(--ink); display:block; }
+  .preview-img .ph .ttl{ font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase; font-weight:700; }
+
+  /* 内嵌的产品预览表（Swiss Mono 风格） */
+  .table{ font-size:11px; }
+  .trow{ display:grid; grid-template-columns:30px 34px 1fr 80px 1.2fr 88px; gap:8px; align-items:center; padding:0 10px; height:42px; border-bottom:1px solid var(--hair); }
+  .trow.head{ height:34px; border-bottom:1.5px solid var(--ink); background:var(--soft); }
+  .trow .th{ font-size:9px; letter-spacing:1.6px; text-transform:uppercase; color:var(--mut); font-weight:700; }
+  .trow .nm{ font-weight:700; }
+  .trow .uid{ font-size:9.5px; color:var(--dim); letter-spacing:.8px; text-transform:uppercase; }
+  .trow .nm i{ display:block; font-style:normal; }
+  .trow .nm b{ font-weight:700; }
+  .trow .meter{ height:8px; background:var(--soft); border:1px solid var(--hair); }
+  .trow .meter i{ display:block; height:100%; background:var(--ink); }
+  .trow .meter .warn{ background:repeating-linear-gradient(135deg, var(--ink) 0 4px, #b9b9b0 4px 8px); }
+  .trow .meter .bad{ background:var(--red); }
+  .trow .pnum{ font-variant-numeric:tabular-nums; font-size:11px; font-weight:600; }
+  .trow .pnum em{ font-style:normal; color:var(--dim); font-size:9.5px; font-weight:400; }
+  .trow .badge{ display:inline-block; font-size:9px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; padding:3px 7px; border:1px solid var(--ink); }
+  .trow .badge.live{ background:var(--ink); color:#fff; }
+
+  .preview-side{ display:flex; flex-direction:column; gap:0; }
+  .preview-side .it{ padding:14px 0; border-bottom:1px solid var(--hair); }
+  .preview-side .it:last-child{ border-bottom:none; }
+  .preview-side .it .lab{ font-size:9.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--mut); font-weight:700; }
+  .preview-side .it .ttl{ font-size:14px; font-weight:700; margin-top:3px; letter-spacing:-.2px; }
+  .preview-side .it .desc{ font-size:12px; color:var(--mut); margin-top:4px; line-height:1.6; }
+  .preview-side .it .desc code{ background:var(--soft); padding:1px 5px; font-family:ui-monospace,Consolas,monospace; font-size:11px; }
+
+  /* ===== 工作流 ===== */
+  .flow{ display:grid; grid-template-columns: repeat(4, 1fr); border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+  .flow-step{ padding:18px 18px 16px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); position:relative; }
+  .flow-step .num{ font-size:11px; letter-spacing:1.8px; color:var(--dim); font-weight:700; font-variant-numeric:tabular-nums; }
+  .flow-step .ttl{ font-size:14px; font-weight:800; margin-top:4px; letter-spacing:-.2px; }
+  .flow-step .desc{ font-size:12px; color:var(--mut); margin-top:4px; line-height:1.6; }
+  .flow-step .arr{ position:absolute; top:50%; right:-7px; transform:translateY(-50%); z-index:2; font-size:14px; font-weight:700; background:var(--bg); padding:0 2px; color:var(--dim); }
+
+  /* ===== FAQ ===== */
+  .faq{ display:grid; grid-template-columns: 200px 1fr; gap:28px; align-items:start; }
+  .faq h4{ font-size:24px; font-weight:800; letter-spacing:-.4px; }
+  .faq h4 em{ font-style:normal; color:var(--dim); display:block; font-size:11px; letter-spacing:1.8px; text-transform:uppercase; margin-top:6px; font-weight:600; }
+  .faq-list .q{ padding:14px 0; border-top:1px solid var(--hair); }
+  .faq-list .q:first-child{ border-top:1px solid var(--ink); }
+  .faq-list .q .qt{ font-size:13px; font-weight:700; letter-spacing:-.1px; }
+  .faq-list .q .qa{ font-size:12px; color:var(--mut); margin-top:5px; line-height:1.65; }
+  .faq-list .q .qa code{ background:var(--soft); padding:1px 5px; font-family:ui-monospace,Consolas,monospace; font-size:11px; }
+
+  /* ===== Footer ===== */
+  footer{ padding:24px 0 28px; display:flex; justify-content:space-between; align-items:center; gap:24px; }
+  footer .meta{ font-size:10.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--mut); }
+  footer .links{ display:flex; gap:14px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; }
+  footer .links a{ font-weight:700; }
+  footer .links a:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+  /* 响应式（窄屏弱化硬网格） */
+  @media (max-width: 1100px){
+    body{ min-width:auto; padding:0 12px; }
+    .hero{ grid-template-columns: 1fr; }
+    .features{ grid-template-columns: 1fr 1fr; }
+    .flow{ grid-template-columns: 1fr 1fr; }
+    .preview{ grid-template-columns: 1fr; }
+    .stats{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body data-page-node-id="Id4YILaKSfc5Sel8iPeNvM">
+
+<div class="topline" data-page-node-id="OWPWnC6SIKBEuZXWRD0CWy"></div>
+<div class="frame" data-page-node-id="SE3lSqwMAcHHxeKKRCepZ2">
+
+<header class="top" data-page-node-id="t9qHfHT9Nt6rzCmaVV6Ofa">
+  <div class="brand" data-page-node-id="SDwOLgnLaRlkqJe7oPTWky">
+    <img src="assets/qingzhu.jpg" alt="青竹" data-page-node-id="R7BtbFHNTG4Mc4jTX2FhXE">
+    <div data-page-node-id="uYiJ04d2z9JEfjulzluoiF">
+      <h1 data-page-node-id="3BVJ1w69gQBy8vTbAjVLKD">青竹 Buddy <i data-page-node-id="IW9mvtLDCwPbwHQXGeO3e0">/ Qingzhu</i></h1>
+      <p data-page-node-id="iRETtetLGPF5rRabuG7ND5">WorkBuddy × CodeBuddy — Multi-Account Console</p>
+    </div>
+  </div>
+  <nav class="nav" data-page-node-id="yped4ZkMAsQElcDNL7bZZs">
+    <a href="#features" data-page-node-id="cal5Te0BTLpEUM1dqZIDwH">功能</a>
+    <a href="#download" data-page-node-id="oiHBur630o3p2CCPPHFaBY">下载</a>
+    <a href="#faq" data-page-node-id="3JGvdX3pF5zAyA1wzvIOtG">FAQ</a>
+    <a class="repo" href="https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases" target="_blank" rel="noopener" data-page-node-id="uaToZEDdGYcwD0pJjhWDO1">所有 Releases →</a>
+  </nav>
+</header>
+
+<!-- ========== HERO + 下载卡 ========== -->
+<section class="hero" id="top" data-page-node-id="a8nzF0grEyXqcuHIQFec4z">
+  <div class="hero-l" data-page-node-id="cj9OXJoM4XX8Qkx36wCDhP">
+    <h2 data-page-node-id="Vuc3whCGP57t0IpBnducj1">多账号，<br data-page-node-id="D96KjZxriDC23ncrVJEpyF">用<em data-page-node-id="AnBA5Ho9GH60CpmjzSRhrH">一扇窗</em><br data-page-node-id="4cZR4hlVP1GiWmpaaD4OkA">管清楚。</h2>
+    <p class="sub" data-page-node-id="200f4XUS9E3gAyFCmucLgA">青竹 Buddy 是一款桌面端多账号控制台：批量导入 WorkBuddy / CodeBuddy 登录态，按 uid 自动去重，幂等批量签到，附带账号可用性检测，一键切换客户端当前账号。</p>
+    <div class="meta" data-page-node-id="JCxPPVz9DR1dID1BqDh7y0">
+      <span data-page-node-id="It8uflwLLsL96CD6OomSdz"><b data-page-node-id="hP1E9sjI4jXpvAerTXSeho">平台</b>Windows · macOS · Linux</span>
+      <span data-page-node-id="vMEXuXfwTkbj44LFMvAUI4"><b data-page-node-id="7el8c8GqhTHGXdtDkJiyyv">架构</b>x64 · arm64</span>
+      <span data-page-node-id="PFuOzM8JBdKDpRnYN0QJbL"><b data-page-node-id="c9ht94HNDlwUwLhnKlWjwB">许可</b>MIT</span>
+    </div>
+    <div class="cta" data-page-node-id="3OdoZ07XlwrSEqNj9mHrxy">
+      <a class="btn primary" href="#download" data-page-node-id="wpDmcIRNcHVCXyOR20CqgR">↓ 下载最新版</a>
+      <a class="btn" href="https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases" target="_blank" rel="noopener" data-page-node-id="rXEYoifBkjT7476yYLMLs5">查看所有版本 <small data-page-node-id="EyOrbAYnGRpKXFjp55ANF8">→</small></a>
+    </div>
+  </div>
+
+  <aside class="download-card" id="download" data-page-node-id="eIqbD8WBclZnZkqWNpvch2">
+    <div class="lab" data-page-node-id="TLi7bBXtJCnMgkPXFW5N9j">最新发布 / Latest</div>
+    <div class="ver" data-page-node-id="gunNNqhX3OhjkHCAE4q5vj">
+      <span id="latestVer" data-page-node-id="ADFvj5VLnDIqrN2eALfSSA">v—</span>
+      <span class="tag" id="latestTag" data-page-node-id="BlABDM9YAtpBsmy1QnGqdr"></span>
+    </div>
+    <div class="date" id="latestDate" data-page-node-id="qtBLKlcgADMT7EMjkpxdOU">读取中…</div>
+
+    <div class="pl" data-page-node-id="y3LEm4mPGBP1eqLCAFfgnX">
+      <!-- Windows -->
+      <div class="pl-row" data-page-node-id="kqA7sFaQeMffftCqrxgbRR">
+        <div class="os" data-page-node-id="RGoqx9SWuVaHY7xONxef3I">Windows <i data-page-node-id="qlRKLJgiZwMfjloUfJSRyE">x64</i></div>
+        <div class="pick" data-page-node-id="cPfxdvNgxwAEeGYWJe0mVL">NSIS 安装包 · <b data-page-node-id="nE29OrlxD8beALFdXcVAOR">推荐普通用户</b></div>
+        <a class="dl-btn" id="dlWin" href="#" rel="nofollow" data-page-node-id="hd4OgMQDrUosfiVq9CAmEO">下载 .exe</a>
+      </div>
+      <!-- macOS -->
+      <div class="pl-row" data-page-node-id="beMgqDF7IcZuEO3FZOtRet">
+        <div class="os" data-page-node-id="wGoRjqi7xPHrq4nwMt02PH">macOS <i data-page-node-id="apPs5Z6ASp3jx4sMD3DCA7">universal</i></div>
+        <div class="pick" data-page-node-id="KJCbQFa5Ex2H0pCitCYwYy">DMG 镜像 · Apple Silicon + Intel</div>
+        <a class="dl-btn" id="dlMac" href="#" rel="nofollow" data-page-node-id="vX7bXLAArqH3B4HNGRrKrE">下载 .dmg</a>
+      </div>
+      <!-- Linux -->
+      <div class="pl-row" data-page-node-id="nUzpDHGFQq5XOafDFpKfUe">
+        <div class="os" data-page-node-id="bgsXo8KX1hnt9ozg09UXnx">Linux <i data-page-node-id="4nQGoaYX4ZZtHwG0FGZWE4">x64</i></div>
+        <div class="pick" data-page-node-id="HVtohFM2j8CDHRIey7Tyw4">AppImage / deb / rpm</div>
+        <a class="dl-btn" id="dlLin" href="#" rel="nofollow" data-page-node-id="mF4G3vRDOUdkABGuLR9NMs">下载 AppImage</a>
+      </div>
+    </div>
+
+    <div class="fallback" data-page-node-id="OaBiYbJHdAt0AO8BZf3e2h">
+      历史版本与全部产物请见
+      <a href="https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases" target="_blank" rel="noopener" data-page-node-id="ZBbrZNqZBBNi8Ak8OfVjaN">Releases 页</a>。
+    </div>
+  </aside>
+</section>
+
+<!-- ========== 数据栏 ========== -->
+<div class="stats" data-page-node-id="ADliVbvWgboWki6mZuvrS2">
+  <div class="stat" data-page-node-id="W0ui0wfjvCmpWu9ACSigmA">
+    <span class="lab" data-page-node-id="a9lgZcl392uoJnWjZmYoMp"><i data-page-node-id="q1aJ9IHct3F7xpAkkOJNDT"></i>批量签到</span>
+    <span class="val" data-page-node-id="Y9YycUIh0rfcLcVpG3xLjI">幂等</span>
+    <span class="note" data-page-node-id="iauCFXGxVvDKWZaCywO3Yj">今日已签自动跳过 · 绝不重复领取</span>
+  </div>
+  <div class="stat" data-page-node-id="WswEgOa6Ti06r1zGHElANM">
+    <span class="lab" data-page-node-id="OWk4gKyZBTBGvMgfamMxFD"><i class="cb" data-page-node-id="OrBnSb3sxv0Mke4uUVzxUj"></i>可用性检测</span>
+    <span class="val" data-page-node-id="KpLF6Ka8L0G9zeM8aS1VsL">实时</span>
+    <span class="note" data-page-node-id="ixcKcgqfSPLY3tsQc42vbH">发 hi 有回复 = 可用 · 失效自动置灰</span>
+  </div>
+  <div class="stat" data-page-node-id="9MMJRNHbh3GZ60QikJzxiL">
+    <span class="lab" data-page-node-id="wPpV6LZWHUfyCbC8638nW4">账号切换</span>
+    <span class="val" data-page-node-id="vghTYlhbB7bo6GEF3lfrhJ">一键</span>
+    <span class="note" data-page-node-id="yygdG9XNeBrPzDTa2p9R3X">切换前自动备份 · 可恢复</span>
+  </div>
+  <div class="stat" data-page-node-id="qcAJxr48qBAUMFuEoz73d0">
+    <span class="lab" data-page-node-id="nIATJ3ddsETxWrIhRYhP5N">数据迁移</span>
+    <span class="val" data-page-node-id="JA5Dj81lc7qq9oJrtFga4u">导出 / 导入</span>
+    <span class="note" data-page-node-id="lHn710NNkAO9MdwA3NcErD">完整登录态 JSON · 换电脑一步到位</span>
+  </div>
+</div>
+
+<!-- ========== 功能 ========== -->
+<section id="features" data-page-node-id="0xwP1qwI0GOpqbUD1cSkB2">
+  <div class="sec-head" data-page-node-id="dg3ujUuwyvlGBCEs5DXbDK">
+    <h3 data-page-node-id="xFlvvsYjuLc4nIj2bryR04">核心<em data-page-node-id="f4smMWfCjWGPdG9BswjJmw">能力</em></h3>
+    <div class="right" data-page-node-id="aAJwXYlaIBWfyeQtcJDWcs">
+      FEATURES / <b data-page-node-id="ybU6GjGZzay7C1kfghyjqX">为什么选青竹 Buddy</b>
+    </div>
+  </div>
+
+  <div class="features" data-page-node-id="OOD7ZFMtu1UEVpXtAfVN0h">
+    <div class="feat" data-page-node-id="AEej6oP6yhmKnPU1K4iqZP">
+      <div class="idx" data-page-node-id="qNT5xilQWm3UqzDWXp0Xy6">01</div>
+      <div class="ttl" data-page-node-id="n1Hvcfo8lpkHqEDlnTI5SU">批量签到</div>
+      <div class="desc" data-page-node-id="eCBFF72uHTFrgrTJv7vDZd">一次跑完所有账号，按 uid 去重（保留过期更晚那份）。今日已签自动跳过，不会重复领积分。</div>
+    </div>
+    <div class="feat" data-page-node-id="yqwENYikCSDEdr5ZHXp5Hd">
+      <div class="idx" data-page-node-id="p43wY6aIsHq0Dc0eyrDpAc">02</div>
+      <div class="ttl" data-page-node-id="kyTlxPyj1XDGhLfFJLXjD2">可用性检测</div>
+      <div class="desc" data-page-node-id="2DFXwWaCBRMVepua3peMQI">查询接口附带发 hi 心跳：正常回复 = 可用；额度耗尽 / 过期 / 失效自动区分，状态在列表里实时标灰。</div>
+    </div>
+    <div class="feat" data-page-node-id="l6B6hhbEBAjSzdVg3DfYi6">
+      <div class="idx" data-page-node-id="GdTNhXHocJeavTB8BkbJAS">03</div>
+      <div class="ttl" data-page-node-id="qRDsofJZfh3xJkR6VII3Uc">一键切换账号</div>
+      <div class="desc" data-page-node-id="KIMBBmSz6UFPf361WOsLBY">自动解密 CodeBuddy 的 state.vscdb（Electron safeStorage）→ 备份 → 写入，全程不到 1 秒，原登录态可一键回滚。</div>
+    </div>
+    <div class="feat" data-page-node-id="Kw0Z4FAvXWSNYtSU0LQZPJ">
+      <div class="idx" data-page-node-id="ShvY04rNmUTfakHjUPKVjz">04</div>
+      <div class="ttl" data-page-node-id="xXSCe7KVKoDhgbg0AWsAIA">WorkBuddy × CodeBuddy</div>
+      <div class="desc" data-page-node-id="GiJdj5lUyrz4FP1mVuEFuH">同一份账号库同时管理两套体系，积分按 user.domain 动态路由 www.workbuddy.cn / www.codebuddy.cn。</div>
+    </div>
+    <div class="feat" data-page-node-id="HaUzgg6wiHXgXAJqeACHNV">
+      <div class="idx" data-page-node-id="fKOw5Pbfz2xm52bZrRDQcv">05</div>
+      <div class="ttl" data-page-node-id="GeDvQTaPtB4U7Tbs7LQtbI">列表 / 卡片视图</div>
+      <div class="desc" data-page-node-id="TPvRhEp149HSKPKZTcN0yD">三列排序、可搜索、配置全部持久化（窗口大小、列宽、排序状态重启后还在）。</div>
+    </div>
+    <div class="feat" data-page-node-id="lTqAlNDSO0Za94kq7wzgOp">
+      <div class="idx" data-page-node-id="ZRIp8b44GJMxBnhzciz0da">06</div>
+      <div class="ttl" data-page-node-id="BJie0DjlDQfY3Fe02e8NjF">备份与迁移</div>
+      <div class="desc" data-page-node-id="33hm3rn6B0hOSLiUKTQOtB">JSON 全量导出（含登录态与签到进度）。换电脑导入即用，导出文件请妥善保管，不要外传。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 预览 ========== -->
+<section data-page-node-id="Pm7GNXaerPBCv21azFGxg0">
+  <div class="sec-head" data-page-node-id="FYDB5qoOK99UEnYoPRQaDX">
+    <h3 data-page-node-id="QeupISTtm1HDvEREHA3giS">一眼<em data-page-node-id="LZefWtBgZDIA0DbYqZgbGE">看明白</em></h3>
+    <div class="right" data-page-node-id="2reOXbObm0uhWWQWsyPFkL">
+      UI / <b data-page-node-id="MqibGnZAABCqGm9RyS2vI6">瑞士黑白 Mono · 强网格 · 表格优先</b>
+    </div>
+  </div>
+
+  <div class="preview" data-page-node-id="Mv6y0TSRPw6jnqdfYQzcqQ">
+    <div class="preview-img" data-page-node-id="lFEKmbqCn8uUtRbItdHuTD">
+      <div class="ph" data-page-node-id="tLzcJrJD5Xo4PtWFAScrXF">
+        <div class="dots" data-page-node-id="nN3WlKFunqn6l1PfjF4cHV"><i data-page-node-id="2VUE1GXWMfXoV70G5CTjcc"></i><i data-page-node-id="zoolPBDh7Gh81D2Nyd4Zjd"></i><i data-page-node-id="UDeiH9HEUOM3BEyU81x94P"></i></div>
+        <div class="ttl" data-page-node-id="BWDdb5GWa9Fi3RgDXi9h9e">青竹 Buddy · Main</div>
+        <div class="dots" data-page-node-id="tQHXVDMrmUpyYB7JZoNOnY"></div>
+      </div>
+      <div class="table" data-page-node-id="ysHVIbn0gMlTpz2MeKDEFr">
+        <div class="trow head" data-page-node-id="lYSIHlCEyx9R0kIkKADxzj">
+          <span data-page-node-id="1pmEA4vsuZb5vmaOyEwMsx"></span><span class="th" data-page-node-id="vAXXHR1gC0bL0TQ2EjTDo2">№</span>
+          <span class="th" data-page-node-id="wNohhN7Jl5crEfjQmoFa2s">账号</span>
+          <span class="th" data-page-node-id="gXRchoGd26YQ6499ZR39JL">类型</span>
+          <span class="th" data-page-node-id="yEr26zAOnyHCDlwQAzUcK3">可用积分</span>
+          <span class="th" data-page-node-id="Oad3WGYEDs6HBVGIlK7VJT">更新</span>
+        </div>
+        <div class="trow" data-page-node-id="wIefvFxuKYnnzdIRNWqr8F"><span data-page-node-id="sQwMYEcjXtLtxnYRN1mXCG"></span><span data-page-node-id="cSMM8PZXjz9Endk8lkJ2pL">01</span>
+          <span class="nm" data-page-node-id="Bh7xhSU4AIIM0A6wPz7RS6"><b data-page-node-id="oPZlBsgApbeYDVEyWWvyhZ">T**5</b><i data-page-node-id="fkU48vzA0DTAf7yarHkrWa">UID 8821</i></span>
+          <span data-page-node-id="Zp4kb0kAcJo3oXjUUiBf5m"><span class="badge" data-page-node-id="J43Kb55FItZc6N69m0yloG">WorkBuddy</span></span>
+          <span class="pnum" data-page-node-id="cgF4eG8oAsay0sjGAOwEhK">2,531 <em data-page-node-id="SHOatOHpXSHejW68gI4vn6">/ 4,500</em></span>
+          <span class="meter" data-page-node-id="ylK2vZ8Z8vC5X8IZwfUo66"><i style="width:56%" data-page-node-id="oXed8IGp5axToVoGBKFxzU"></i></span>
+        </div>
+        <div class="trow" data-page-node-id="701EEA9nPuEmTPJkZd8yHl"><span data-page-node-id="QeOM9S5J0Qp0woUiFqhr8n"></span><span data-page-node-id="PaPfhogRobUSDP2SdteGOM">02</span>
+          <span class="nm" data-page-node-id="lkT2t0VRwA51gFwpzlYtgU"><b data-page-node-id="zFdV3ZUOiCWQ5zIxeaGv4R">A**波</b><i data-page-node-id="RGpNt0ezfKuVer1vKipxpH">UID 3357</i></span>
+          <span data-page-node-id="Ed5DSroXDvaly2hFD5PKq3"><span class="badge" data-page-node-id="8nOYghmP1xKffGMrH26OYw">WorkBuddy</span> <span class="badge" data-page-node-id="RvE25yDpXEdjr7xAwMAw2n">CodeBuddy</span></span>
+          <span class="pnum" data-page-node-id="BWHkF3JIGS2V0PbScOYEpS">1,300 <em data-page-node-id="DEtrfJeJAwD3O9QPzJowc4">/ 5,700</em></span>
+          <span class="meter" data-page-node-id="mWM2JQCpGED5bIZbCBGQo2"><i style="width:23%" data-page-node-id="tLMyLXh5mcI9A4VxRJVkSH"></i></span>
+        </div>
+        <div class="trow" data-page-node-id="dOJdAShElRdlBwDvS8KWrF"><span data-page-node-id="sBEzRvebPZKXLfa88w9dJw"></span><span data-page-node-id="rRmfcexOCk6wSWWXUcermC">03</span>
+          <span class="nm" data-page-node-id="mxNbpLqiPVHP0I9DRMc1U9"><b data-page-node-id="Ze6cLjdSa73AfMe4kuFkBB">大**兄</b><i data-page-node-id="Tl6AWCffXBWWI6CBCeuDRr">UID 7902</i></span>
+          <span data-page-node-id="EVAm2LA9gQWtiBlZ9OML2x"><span class="badge" data-page-node-id="lLI82Ux61JWT3KXbwvleZ2">WorkBuddy</span> <span class="badge" data-page-node-id="4CjUmYwkFXQaHQNXwtxBbC">CodeBuddy</span></span>
+          <span class="pnum" data-page-node-id="ZxrRGVkD2HG9wpVkzDvjOQ">1,003 <em data-page-node-id="V4AdaubR6ScCIMtFMfsoEr">/ 5,500</em></span>
+          <span class="meter" data-page-node-id="JIAAKr8QKPc1A0tuWIpYvZ"><i class="warn" style="width:18%" data-page-node-id="qbluyowaleKR6WMFEPqT1x"></i></span>
+        </div>
+        <div class="trow" data-page-node-id="1TSSp1eebHvDjPJPwImpEN"><span data-page-node-id="4BvCjDPF97xh7rMWeCOq4p"></span><span data-page-node-id="uRV7HkkGdSnmaHT1omjT3o">04</span>
+          <span class="nm" data-page-node-id="90OqTl4b1UbvCcPPmVso7X"><b data-page-node-id="5VCi3a5E4dDpz30NKTCE59">T**2</b><i data-page-node-id="zs4K7mYL6xiVDOhCP2PL5P">UID 6630</i></span>
+          <span data-page-node-id="3Lz9m0xrDLlHj7tg13kSD4"><span class="badge" data-page-node-id="X6CIt4KXk2z2ehOA0jjPs2">WorkBuddy</span></span>
+          <span class="pnum" data-page-node-id="TgLkRhSnHycau9njr8RyPz">183 <em data-page-node-id="sukvVFAGPOgsS7LpJ59Cul">/ 5,550</em></span>
+          <span class="meter" data-page-node-id="puSMiHunRxv7erxHKZmr6h"><i class="bad" style="width:3%" data-page-node-id="H7ngFyWNlF5s9n2zwyh0ng"></i></span>
+        </div>
+        <div class="trow" data-page-node-id="cCGWRSKE91U3HHfUR9DWbh"><span data-page-node-id="lFPEXED08c2Xx7Ddpi06RS"></span><span data-page-node-id="CHf5OL5RTy5PeDpYIj0OfX">05</span>
+          <span class="nm" data-page-node-id="3huoMIAKRh8EFKx7nODT3C"><b data-page-node-id="GW5vh0Y2sNBfuXbvkHmyeR">T**5</b><i data-page-node-id="MH05svokVJ77jNUBLoeTIp">UID 2210 · <span style="color:var(--mut)" data-page-node-id="LmtdzBUDb39DxtkEVf3ylF">使用中</span></i></span>
+          <span data-page-node-id="hsAEsNOwlf8M0auAjAUJBD"><span class="badge live" data-page-node-id="0O93nNVaPg1CdDpPo6inZ8">WorkBuddy</span></span>
+          <span class="pnum" data-page-node-id="Cl3DJpNvA3ndhCrkkDFp9H">117 <em data-page-node-id="rjIo5vFCOUgcFtXOk4tuMG">/ 4,800</em></span>
+          <span class="meter" data-page-node-id="0BUOKDEIVcEbpVDrdyP2Yd"><i class="bad" style="width:2%" data-page-node-id="LNj2LnWMOfOtQdE0POIWYT"></i></span>
+        </div>
+        <div class="trow" data-page-node-id="j11BbiDJ8YHTNJ723SExEj"><span data-page-node-id="SD3W1l8Gl9rD0FV7hGnV7H"></span><span data-page-node-id="ZxWI6QvWKA9zjU8HAalAQD">06</span>
+          <span class="nm" data-page-node-id="2B2reSEA3KtY81zDFCwHV0"><b data-page-node-id="EjGhmrAcjKYHkW0HXiEkN0">T**0</b><i data-page-node-id="Xb50zGz5GF5zTyblpAzLPL">UID 9184</i></span>
+          <span data-page-node-id="TIiUGwGP7FK8OaoPd0FUFl"><span class="badge" data-page-node-id="JfxHXNGKXDDLTTaP4KilOC">WorkBuddy</span></span>
+          <span class="pnum" data-page-node-id="KqIDLlszC2nBEhIWWnEQ77">89 <em data-page-node-id="05Yy6aduWt1spL93s8OJEJ">/ 10,370</em></span>
+          <span class="meter" data-page-node-id="Gq7e18yQdwLcfHEL3BMSJl"><i class="bad" style="width:1%" data-page-node-id="fdb3MPh5ZfGFHdkKMDADxx"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-side" data-page-node-id="ugfpoITiIVNheCu3Slf6y5">
+      <div class="it" data-page-node-id="Kb0YdpmKF9txJuxAh7dTbr">
+        <div class="lab" data-page-node-id="GDNCB2U6hgqWspWsvH9dIh">01 · 数据导入</div>
+        <div class="ttl" data-page-node-id="njS1st0yEbuznJYgDHrgjr">从 .info 文件夹读</div>
+        <div class="desc" data-page-node-id="HwLjBiesOWw9bpxvzoVJcf">直接选择 WorkBuddy 的 <code data-page-node-id="kzXc7Ae5GAgc6HTnJgAcIf">auth/*.info</code> 目录，自动解析明文 JSON，按 <code data-page-node-id="obAkbWvx1YBy4ac27Uv5Oc">uid</code> 去重并保留过期时间更晚的副本。</div>
+      </div>
+      <div class="it" data-page-node-id="Z3O9UaAdEqcaT2YHwi39LW">
+        <div class="lab" data-page-node-id="CCrDQQzbSzh8kjVPnDXaXo">02 · CodeBuddy 解密</div>
+        <div class="ttl" data-page-node-id="HvKXG0d9QzqJDzQl9DZFBX">Electron safeStorage 直读</div>
+        <div class="desc" data-page-node-id="nZWRv5hnCUtbD5Ui1WU6VS">从 <code data-page-node-id="nzfxAHMMAYxiQiWLUhweK6">state.vscdb</code> + <code data-page-node-id="fvqF8i460Hbr7r2xiIDV22">Local State</code> 解出 <code data-page-node-id="nDUPqJV90l1rDugTScuQHk">v10</code> 前缀密文（AES-128-CBC），无需输入密码即可完成切换。</div>
+      </div>
+      <div class="it" data-page-node-id="jbqnZpqpq3DMdUdtzOtTxJ">
+        <div class="lab" data-page-node-id="F1ePPhGrfXiE3IBctXbdNB">03 · 切换安全网</div>
+        <div class="ttl" data-page-node-id="mJvzJ0vvJqtvpmgFJ108pm">自动备份可回滚</div>
+        <div class="desc" data-page-node-id="IfALxZT4SWHwXKyuMcJdXt">切换前把原登录态写进 <code data-page-node-id="gzFJnbPvunxlveAVVZapn4">state.settings.lastCbSwitch</code>，需要时一键还原到切换前的状态。</div>
+      </div>
+      <div class="it" data-page-node-id="cBIgxhF3QmnpIbvSW3V8c1">
+        <div class="lab" data-page-node-id="rBDam7EsEZO1CqHtENTAO9">04 · 离线缓存</div>
+        <div class="ttl" data-page-node-id="THOZ1mqYRyarN1gTm4TOAj">积分 5 分钟缓存</div>
+        <div class="desc" data-page-node-id="gNq46kFnNHEi8IfrJracwK">同一账号短时间内重复查询命中本地缓存，避免触发风控；缓存键含 token 哈希，账号切换自动失效。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 工作流 ========== -->
+<section data-page-node-id="XXL7JN5cbB4nJlp6K8BBWy">
+  <div class="sec-head" data-page-node-id="ATQITCoXAdOfXCTZhftjHo">
+    <h3 data-page-node-id="E8TMyl2pW8OZL7ZY9gH562">怎么<em data-page-node-id="kQptdMdSPilekNWISho33T">用</em></h3>
+    <div class="right" data-page-node-id="pEWRvDfmyL4DvH3cFR1C2t">
+      WORKFLOW / <b data-page-node-id="ZYFhbCzCfr5x9V3sNGsKXI">四步上手</b>
+    </div>
+  </div>
+
+  <div class="flow" data-page-node-id="QaIbbTKdJ8jmuxwDzBaTfq">
+    <div class="flow-step" data-page-node-id="i6abywKuuV5EQByVBRzsPB">
+      <div class="num" data-page-node-id="4663MJvhcMRJXwatBr5mWT">STEP 01</div>
+      <div class="ttl" data-page-node-id="P38g0uXzzjVbwdpOaKyMms">下载安装</div>
+      <div class="desc" data-page-node-id="BzrwqOCzkkg8qnYKct98Vd">从下方下载对应平台安装包，双击安装。macOS 首次打开右键"打开"即可。</div>
+      <span class="arr" data-page-node-id="9US253RaSi7byEiGHbCH5b">→</span>
+    </div>
+    <div class="flow-step" data-page-node-id="nZcg3wCGmLMobbHqHoSNTP">
+      <div class="num" data-page-node-id="XjCwXVil1QiVNKM7Et7bdU">STEP 02</div>
+      <div class="ttl" data-page-node-id="nfUXBZZYJTHL3uO4r9rslh">导入账号</div>
+      <div class="desc" data-page-node-id="GJeV0Bm6Ok7LuLARVmASyZ">选择 WorkBuddy 登录态目录或单个 .info 文件，自动按 uid 去重。</div>
+      <span class="arr" data-page-node-id="HpN5LTQd7CON9PVK3QXaUm">→</span>
+    </div>
+    <div class="flow-step" data-page-node-id="VDqZGPndNIwjdakisyjwD5">
+      <div class="num" data-page-node-id="h71ddzCUnymKdtca8EeRiA">STEP 03</div>
+      <div class="ttl" data-page-node-id="sajnTYbV9qy4RKKTStLByF">同步状态</div>
+      <div class="desc" data-page-node-id="r3yZyoFriLfSXDFGPknsZi">点击"更新全部"批量查询积分 + 签到 + 可用性检测，失败账号自动置灰。</div>
+      <span class="arr" data-page-node-id="lY5VahFlmUZBdK6GJXSEHc">→</span>
+    </div>
+    <div class="flow-step" data-page-node-id="lcvEMqFNtnJ1Fk9ZavX8hn">
+      <div class="num" data-page-node-id="ywPAq4pBNu2hSQB1VCYnZK">STEP 04</div>
+      <div class="ttl" data-page-node-id="TOQ9X5MpZf4SFBHRdJJ8aV">一键切换</div>
+      <div class="desc" data-page-node-id="QdYGanvF3UFQWOCTx5h03X">选定目标账号 → 点击切换 → 自动备份原登录态 → 写入客户端，秒级完成。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FAQ ========== -->
+<section id="faq" data-page-node-id="Dc8qGSE6eiNlvkjaK9PGpX">
+  <div class="faq" data-page-node-id="X5Bmy0TQ55eO156xb1hbWq">
+    <h4 data-page-node-id="ppVD9AmgMfd4nWb5keIIAA">常见问题<em data-page-node-id="rfNscbfdSoiIJVKkMszyS0">FAQ</em></h4>
+    <div class="faq-list" data-page-node-id="Cmf8yD1Am5NTXxkvhPkIUv">
+      <div class="q" data-page-node-id="0Mp73Um9S7IAHm55bImF9i">
+        <div class="qt" data-page-node-id="jPvF8Pvh2KVvdQQ3IxLm0b">安全吗？登录态会泄露吗？</div>
+        <div class="qa" data-page-node-id="rrlfVvPB62okTJj7EMtz19">登录态只在你的本机处理与存储，<b data-page-node-id="cXI2k3GYcUPoKpEjfrTash">不会上传任何服务器</b>。导出备份文件含明文 token，请妥善保管，不要发到群聊或公开网盘。</div>
+      </div>
+      <div class="q" data-page-node-id="X6xvTnDKiSQzMSrQsoI4Fj">
+        <div class="qt" data-page-node-id="RrpBOYNgtvhGnQLOhY2pjX">支持 Apple Silicon Mac 吗？</div>
+        <div class="qa" data-page-node-id="DlMXBwwhR5CWuk0IRMdHDB">支持。macOS DMG 同时打 x64 + arm64（universal），Intel 和 M1/M2/M3/M4 都能装。</div>
+      </div>
+      <div class="q" data-page-node-id="VceGb55D9vuUlxxBnfHGHl">
+        <div class="qt" data-page-node-id="dFpRtaAAMGGYqR8GK3ffvK">WorkBuddy 和 CodeBuddy 有什么区别？</div>
+        <div class="qa" data-page-node-id="X5o5mhi7X8DxCnsjebmn8H">两者共用一套积分体系（域名不同），本工具同时识别 <code data-page-node-id="Y1YBW31WadeXTKOU4TdqLZ">www.workbuddy.cn</code> 和 <code data-page-node-id="R2GYKjBDeXaSxjtNh8oWwx">www.codebuddy.cn</code>，一份账号库两套通行。</div>
+      </div>
+      <div class="q" data-page-node-id="EyABocCnOGocuzdug0BvZb">
+        <div class="qt" data-page-node-id="CszNzFgqzBkUrZXrX7VUY7">开源吗？</div>
+        <div class="qa" data-page-node-id="rA9HgbDx2dS5opDs1QhcLc">本仓库为产品官网与下载站，仅含介绍与安装包。源码仓库为私有。本工具以 MIT 协议发布，但作者暂不公开源码。</div>
+      </div>
+      <div class="q" data-page-node-id="XROpzzHnwsdw6exyIAj1qC">
+        <div class="qt" data-page-node-id="loW1OY0F7dSRi5U06xPyYP">有问题怎么反馈？</div>
+        <div class="qa" data-page-node-id="qWFAUjjtAqCOABdLeXGDz5">在 Releases 页遇到下载问题，请在本仓库的 Discussions 或 Issues 留言；功能需求 / Bug 欢迎到私有源码仓反馈（你已经是内测用户的前提下）。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer data-page-node-id="4uWR4XYGQxjXa2Nr9A38cU">
+  <div class="meta" data-page-node-id="0Cn3NxdT9t8PIc71xJPwiu">© 2026 青竹 Buddy · Qingzhu AI Office · MIT License</div>
+  <div class="links" data-page-node-id="uRUAZYwUlNnW0sBxvJ3RTT">
+    <a href="https://github.com/qingzhu-ai-office/workbuddy-account-manager-public/releases" target="_blank" rel="noopener" data-page-node-id="3q8ABe2ww0iJiSrJNDPGkv">Releases</a>
+    <a href="#top" data-page-node-id="vmAOINH0FrmOjDUmwUvdK6">↑ 回到顶部</a>
+  </div>
+</footer>
+
+</div><!-- /.frame -->
+
+<script>
+/* ============================================================
+   自动从 GitHub Releases API 拉最新版本与产物
+   公开仓：qingzhu-ai-office/workbuddy-account-manager-public
+   ============================================================ */
+(async function(){
+  const OWNER = 'qingzhu-ai-office';
+  const REPO  = 'workbuddy-account-manager-public';
+  const API   = `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`;
+
+  const $ = (id)=>document.getElementById(id);
+  const fallback = ()=>{
+    $('latestVer').textContent  = '—';
+    $('latestTag').textContent  = '前往 Releases 页获取';
+    $('latestDate').innerHTML   = '自动读取失败，请访问 <a href="https://github.com/'+OWNER+'/'+REPO+'/releases" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:underline;">Releases</a>';
+    ['dlWin','dlMac','dlLin'].forEach(id=>{
+      const el = $(id);
+      el.classList.add('disabled');
+      el.removeAttribute('href');
+      el.textContent = '前往 Releases';
+      el.setAttribute('href','https://github.com/'+OWNER+'/'+REPO+'/releases');
+      el.setAttribute('target','_blank');
+    });
+  };
+
+  try{
+    const r = await fetch(API, { headers:{ 'Accept':'application/vnd.github+json' }});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json();
+    const tag = d.tag_name || '';
+    $('latestVer').textContent = tag || '未发布';
+    $('latestTag').textContent = d.prerelease ? 'Pre-release' : 'Stable';
+    const dt = d.published_at ? new Date(d.published_at) : null;
+    $('latestDate').innerHTML = dt ? `<i>●</i> 发布于 ${dt.toISOString().slice(0,10)} · ${d.name||tag}` : '';
+
+    // 找产物
+    const assets = d.assets || [];
+    const pick = (re)=>{
+      const m = assets.filter(a=>re.test(a.name));
+      if(!m.length) return null;
+      // 体积大的更可能是完整安装包
+      m.sort((a,b)=>b.size-a.size);
+      return m[0];
+    };
+    const win = pick(/\.exe$/i);
+    const mac = pick(/\.dmg$/i);
+    const lin = pick(/\.AppImage$/i);
+
+    const set = (id, asset)=>{
+      const el = $(id);
+      if(asset && asset.browser_download_url){
+        el.href = asset.browser_download_url;
+        el.textContent = '↓ ' + (asset.name.split('.').pop().toUpperCase());
+        el.removeAttribute('target');
+      }else{
+        el.classList.add('disabled');
+        el.textContent = '暂未提供';
+      }
+    };
+    set('dlWin', win);
+    set('dlMac', mac);
+    set('dlLin', lin);
+  }catch(e){
+    console.warn('Failed to fetch latest release:', e);
+    fallback();
+  }
+})();
+</script>
+</body>
+</html>
