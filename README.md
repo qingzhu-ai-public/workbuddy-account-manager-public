@@ -12,7 +12,7 @@
 
 ## 下载
 
-当前最新版本 **v1.2.0**。访问 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases) 下载对应平台的安装包：
+当前最新版本 **v1.2.1**。访问 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases) 下载对应平台的安装包：
 
 | 平台 | 推荐产物 | 备注 |
 |---|---|---|
