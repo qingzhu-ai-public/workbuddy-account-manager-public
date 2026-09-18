@@ -82,9 +82,20 @@
 
 ## 🖼️ 界面预览
 
-![青竹 Buddy 主界面：账号列表、积分进度、当前登录槽位与批量操作条](assets/product-screenshot.png)
+![青竹 Buddy 主界面（浅色主题）：账号列表、积分进度、当前登录槽位与批量操作条](assets/product-screenshot.png)
 
 <p align="center"><sub>账号列表 · 积分与剩余百分比 · 当前登录槽位 · 批量签到 / 更新 / 查可用 / 切换 · 账号名默认脱敏</sub></p>
+
+<details>
+<summary>🌙 深色主题预览（点击展开）</summary>
+
+<br>
+
+![青竹 Buddy 主界面（深色主题）](assets/product-screenshot-dark.png)
+
+<p align="center"><sub>深色 / 浅色主题在侧栏底部一键切换，跟着你的桌面环境走</sub></p>
+
+</details>
 
 > 完整产品介绍与更多截图见 **[产品官网](https://qingzhu-ai-public.github.io/workbuddy-account-manager-public/)**。
 
