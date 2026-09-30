@@ -51,15 +51,15 @@
 
 ## 📦 下载
 
-当前最新版本 **v1.2.2**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
+当前最新版本 **v1.2.3**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
 
 | 平台 | 产物 | 体积 | 说明 |
 |---|---|---|---|
-| **Windows** x64 | `Qingzhu-Buddy-Setup-1.2.2.exe` | ~107 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
-| **macOS** Apple Silicon | `Qingzhu-Buddy-1.2.2-arm64.dmg` | ~124 MB | M 系列芯片 |
-| **macOS** Intel | `Qingzhu-Buddy-1.2.2-x64.dmg` | ~128 MB | Intel 芯片 |
-| **Linux** x64 | `Qingzhu-Buddy-1.2.2.AppImage`<br>`workbuddy-account-manager_1.2.2_amd64.deb`<br>`workbuddy-account-manager-1.2.2.x86_64.rpm` | ~121 / 96 / 86 MB | AppImage 免安装 |
-| **Linux** arm64 | `Qingzhu-Buddy-1.2.2-arm64.AppImage`<br>`workbuddy-account-manager_1.2.2_arm64.deb`<br>`workbuddy-account-manager-1.2.2.aarch64.rpm` | ~122 / 91 / 82 MB | 树莓派 / ARM 服务器 |
+| **Windows** x64 | `Qingzhu-Buddy-Setup-1.2.3.exe` | ~107 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
+| **macOS** Apple Silicon | `Qingzhu-Buddy-1.2.3-arm64.dmg` | ~124 MB | M 系列芯片 |
+| **macOS** Intel | `Qingzhu-Buddy-1.2.3-x64.dmg` | ~128 MB | Intel 芯片 |
+| **Linux** x64 | `Qingzhu-Buddy-1.2.3.AppImage`<br>`workbuddy-account-manager_1.2.3_amd64.deb`<br>`workbuddy-account-manager-1.2.3.x86_64.rpm` | ~121 / 96 / 86 MB | AppImage 免安装 |
+| **Linux** arm64 | `Qingzhu-Buddy-1.2.3-arm64.AppImage`<br>`workbuddy-account-manager_1.2.3_arm64.deb`<br>`workbuddy-account-manager-1.2.3.aarch64.rpm` | ~122 / 91 / 82 MB | 树莓派 / ARM 服务器 |
 
 > [!NOTE]
 > **Windows 提示「未知发布者」** —— 未购买代码签名证书，SmartScreen 会拦一下：点「更多信息 → 仍要运行」即可。
@@ -73,7 +73,7 @@
 > **Linux AppImage 双击没反应** —— 先给可执行权限，并确保装了 FUSE：
 >
 > ```bash
-> chmod +x Qingzhu-Buddy-1.2.2.AppImage && ./Qingzhu-Buddy-1.2.2.AppImage
+> chmod +x Qingzhu-Buddy-1.2.3.AppImage && ./Qingzhu-Buddy-1.2.3.AppImage
 > ```
 >
 > 只有安装 Windows 版需要过一次 UAC（要写 `Program Files`）；**日常运行不需要管理员权限**。
