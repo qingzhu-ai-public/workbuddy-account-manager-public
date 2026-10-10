@@ -36,6 +36,7 @@
 |:---:|---|
 | 🗂️ | **一张表管两端** —— WorkBuddy 与 CodeBuddy 共用同一份账号库，按端自动分类，顶部实时汇总两边总积分 |
 | ➕ | **三种导入方式** —— 扫码授权 / 导入本机登录态 / 选择 `.info` 文件；按 `uid` 去重，保留过期更晚的那份 |
+| 🏷️ | **账号分组** —— 自定义分组、分组优先排序，支持折叠与组内上下移；备份一并带上分组信息，桌面端与网页端互通 |
 | ⏰ | **自动签到（幂等）** —— 运行期间每分钟检查一次，今天还没签的 WorkBuddy 账号自动补签，已签的直接跳过 |
 | 📈 | **自动刷新积分** —— 按设定频率刷新全部账号的积分 / 权益包 / 连签 / 到期时间（纯查询，不会顺带签到） |
 | 🧭 | **自动旅行挣积分** —— 每 15 分钟自动派出 / 到点领取，每账号每天 1 次，并留下每日积分流水账本 |
@@ -43,23 +44,27 @@
 | 🛡️ | **不可逆的只查不做** —— 连登兑换 / 盲盒抽奖 / 补登卡只查状态并提示，**绝不代为发出** |
 | 🔍 | **可用性检测** —— 查积分时附带发 hi 心跳，正常回复即判定可用；也支持手动批量实查 |
 | 🔀 | **一键切换登录态** —— 切换前自动备份原登录态、支持回滚；CodeBuddy 走 Electron safeStorage 解密，切完自动重启 |
+| 🚀 | **任务接力** —— 勾选多个账号投入一个大目标，交给 CodeBuddy CLI 无人值守执行；某个账号积分耗尽时**自动换下一个账号接着跑**，进度写入共享的 `progress.md` 跨账号续传 |
+| 🧩 | **接力 · 一键装 CLI** —— 本机没装 CodeBuddy CLI 时，接力页的徽标就是安装入口，点开弹框即可安装（官方安装器免 Node / npm 两条路），装完自动识别 |
+| ⏯️ | **接力 · 中断即续** —— 任何原因中断后点「继续」即可在原任务上接着跑；也能直接在输出底部的输入框补一句话，让 AI 在原任务上迭代，**不必重开任务**。实时输出显示当前执行账号（可复制），并按每轮积分差值实算消耗 |
+| 🪟 | **会话状态监听 + 悬浮监视** —— 置顶小窗常驻显示 WB / CB 两侧**正在跑**的会话，可切大小模式、跟随深浅主题、一键停用；后台任务不会被误判成已结束 |
 | 💾 | **导出 / 导入备份** —— 完整登录态 JSON，换电脑一步搬过去 |
 | 🔒 | **纯本地** —— 账号与登录态只写在你自己的电脑上，没有云端同步 |
-| 🔔 | **内置更新检查** —— 对比本仓最新 Release，有新版本时侧栏亮起徽标，一键跳转下载页 |
+| 🔔 | **更新检查 + 应用内更新** —— 有新版本时侧栏亮起徽标；可直接在应用内下载安装（弹框选方式、显示进度、随时取消），也可跳转下载页手动装 |
 
 ---
 
 ## 📦 下载
 
-当前最新版本 **v1.2.3**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
+当前最新版本 **v1.5.0**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
 
 | 平台 | 产物 | 体积 | 说明 |
 |---|---|---|---|
-| **Windows** x64 | `Qingzhu-Buddy-Setup-1.2.3.exe` | ~107 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
-| **macOS** Apple Silicon | `Qingzhu-Buddy-1.2.3-arm64.dmg` | ~124 MB | M 系列芯片 |
-| **macOS** Intel | `Qingzhu-Buddy-1.2.3-x64.dmg` | ~128 MB | Intel 芯片 |
-| **Linux** x64 | `Qingzhu-Buddy-1.2.3.AppImage`<br>`workbuddy-account-manager_1.2.3_amd64.deb`<br>`workbuddy-account-manager-1.2.3.x86_64.rpm` | ~121 / 96 / 86 MB | AppImage 免安装 |
-| **Linux** arm64 | `Qingzhu-Buddy-1.2.3-arm64.AppImage`<br>`workbuddy-account-manager_1.2.3_arm64.deb`<br>`workbuddy-account-manager-1.2.3.aarch64.rpm` | ~122 / 91 / 82 MB | 树莓派 / ARM 服务器 |
+| **Windows** x64 | `Qingzhu-Buddy-Setup-1.5.0.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
+| **macOS** Apple Silicon | `Qingzhu-Buddy-1.5.0-arm64.dmg` | ~123 MB | M 系列芯片 |
+| **macOS** Intel | `Qingzhu-Buddy-1.5.0-x64.dmg` | ~127 MB | Intel 芯片 |
+| **Linux** x64 | `Qingzhu-Buddy-1.5.0.AppImage`<br>`workbuddy-account-manager_1.5.0_amd64.deb`<br>`workbuddy-account-manager-1.5.0.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
+| **Linux** arm64 | `Qingzhu-Buddy-1.5.0-arm64.AppImage`<br>`workbuddy-account-manager_1.5.0_arm64.deb`<br>`workbuddy-account-manager-1.5.0.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
 
 > [!NOTE]
 > **Windows 提示「未知发布者」** —— 未购买代码签名证书，SmartScreen 会拦一下：点「更多信息 → 仍要运行」即可。
@@ -73,7 +78,7 @@
 > **Linux AppImage 双击没反应** —— 先给可执行权限，并确保装了 FUSE：
 >
 > ```bash
-> chmod +x Qingzhu-Buddy-1.2.3.AppImage && ./Qingzhu-Buddy-1.2.3.AppImage
+> chmod +x Qingzhu-Buddy-1.5.0.AppImage && ./Qingzhu-Buddy-1.5.0.AppImage
 > ```
 >
 > 只有安装 Windows 版需要过一次 UAC（要写 `Program Files`）；**日常运行不需要管理员权限**。
@@ -149,6 +154,31 @@
 
 ---
 
+## 🚀 任务接力：用多个账号的积分，跑完一个大目标
+
+手上账号很多、单个额度又不够干一件大事（写一个完整项目、跑一批重构、做一轮长调研）？**任务接力**就是为这个场景做的：
+
+| | 能力 |
+|:---:|---|
+| 🎯 | **一个目标，多账号轮流跑** —— 勾选要投入的账号，填一个目标交给 CodeBuddy CLI 无人值守执行。当前账号积分耗尽时**自动换下一个账号接着跑**，进度写入共享的 `progress.md`，新账号读它继续，**不会从头再来** |
+| ⏱️ | **可定时启动、可指定工作目录** —— 支持设定启动时刻，到点自动开跑；模型会**探测当前账号真实可用的模型**再选，不写死 |
+| ⏯️ | **中断随时续** —— 限流、关窗、手动停，任何原因中断后点「继续」即可在原任务上接着跑；也能直接在实时输出底部的输入框补一句话，让 AI 在原任务上迭代，**不必重开任务** |
+| 👁️ | **看得见进度与消耗** —— 实时输出里显示当前执行账号（可复制），并按每轮 attempt 前后的积分差值**实算消耗的 CodeBuddy 积分** |
+| 🧩 | **没装 CLI 也能一键装** —— 本机没有 CodeBuddy CLI 时，接力页的 CLI 徽标就是安装入口，点开弹框走官方安装器（免 Node）或 npm，装完自动识别 |
+
+> [!NOTE]
+> 接力会把每个账号的登录态注入**独立的 CLI 配置目录**，不会污染你在 CodeBuddy 客户端里的配置与会话历史。每个账号可用的积分有限，接力按「投入顺序 × 可用额度」自动排队。
+
+---
+
+## 🪟 会话状态监听 + 悬浮监视
+
+一个置顶小窗常驻显示 WorkBuddy / CodeBuddy 两侧**正在跑**的会话（跑了多久、在哪个工作区），大 / 小两种模式随意切，跟随深浅主题，右上角一键停用，位置也会记住。
+
+判据经过实测校准：只有真正在跑（`status=working` 且活动新鲜）的会话才算数，已结束、失败的不会误报；**后台任务（`run_in_background`）在子任务跑完前也不会被误判成已结束**。
+
+---
+
 ## 🧪 常见问题
 
 | 问题 | 说明 |
@@ -163,6 +193,9 @@
 | 一台机器能同时挂两个客户端登录态吗？ | 不能。WorkBuddy / CodeBuddy 各自只保留一份「当前登录态」，所以才有「切换」功能 —— 想用什么账号就切过去 |
 | 支持哪些系统？ | Windows 10/11（**实测可用**）、macOS（Apple Silicon / Intel）、Linux x64 / arm64 都产出安装包 |
 | 需要提前装好官方客户端吗？ | 不强制：WorkBuddy 可以扫码授权；但要「添加 CodeBuddy」扫描当前登录态时，得先登录 CodeBuddy CN 客户端 |
+| 任务接力需要预先装 CodeBuddy CLI 吗？ | 建议装 —— 没装时接力页的 CLI 徽标就是入口，点开弹框一键安装（官方安装器免 Node / npm 两条路），装完自动识别 |
+| 任务接力会弄乱我的 CodeBuddy 配置吗？ | 不会。接力给每个账号用**独立的 CLI 配置目录**，不碰你在客户端里的配置与会话历史 |
+| 任务接力消耗的积分怎么算？ | 每个账号按自己的可用额度出，接力按投入顺序排队；实时输出里会显示每轮实际消耗（按 attempt 前后积分差值实算） |
 | 提了 Issue 没人理怎么办？ | [Issues](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/issues) 会看，但这是个人项目，回复不一定及时。描述问题时**请勿贴 token 或 `.info` 原文** |
 
 ---
