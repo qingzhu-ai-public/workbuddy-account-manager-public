@@ -55,6 +55,24 @@
 
 ---
 
+## 🆕 v1.8.1 更新：检查更新不再被 GitHub 限流
+
+老版本点「检测更新」时不时报 **403 / 检查失败**，不是功能坏了 —— 是它每次都直接问 GitHub 的接口，而未登录访问每小时只有 **60 次**额度，同一个出口 IP（公司网络、共用代理）几个人用一下就耗光了。
+
+v1.8.1 换了数据来源：
+
+| 做法 | 说明 |
+|---|---|
+| **优先读静态页** | 先读发行页的 `latest.yml` 与 `releases.atom`，都是普通静态资源，**不占 API 配额**；已是最新时一次接口都不调 |
+| **确认有新版才补一次** | 只有真的判定「有新版本」时，才调一次接口补上更新说明与资产清单 |
+| **限流也照样能升级** | 万一那一刻又被限流，仍然会告诉你「有新版本 V1.8.x」，只是详情暂缺，可点下面的按钮直接去下载页 |
+| **常驻下载入口** | 设置 → 关于，「检测更新」旁边新增 **「GitHub 下载页」** 按钮，一键在浏览器打开发行页，**不依赖任何检查结果**，限流、断网都能用 |
+
+> [!IMPORTANT]
+> 这个修复只对 **v1.8.1 及以后**生效。装在 **1.6.3 / 1.8.0** 等旧版本的，代码里还是老的纯接口路径，自救不了 —— 请手动到 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest) 下载 v1.8.1 覆盖安装一次，之后就不用再管了。
+
+---
+
 ## 🆕 v1.8.0 新功能：对话导出导入（跨电脑迁移）
 
 以前「切换账号」时可以把对话一并带到另一个账号；现在可以把某个账号的**对话打包带走**，在另一台电脑导入到任意账号名下 —— 换电脑、重装、把工作从笔记本挪到台式机，都不用丢聊天记录和上下文。
@@ -85,15 +103,15 @@
 
 ## 📦 下载
 
-当前最新版本 **v1.8.0**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
+当前最新版本 **v1.8.1**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
 
 | 平台 | 产物 | 体积 | 说明 |
 |---|---|---|---|
-| **Windows** x64 | `Qingzhu-Buddy-Setup-1.8.0.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
-| **macOS** Apple Silicon | `Qingzhu-Buddy-1.8.0-arm64.dmg` | ~123 MB | M 系列芯片 |
-| **macOS** Intel | `Qingzhu-Buddy-1.8.0-x64.dmg` | ~127 MB | Intel 芯片 |
-| **Linux** x64 | `Qingzhu-Buddy-1.8.0.AppImage`<br>`workbuddy-account-manager_1.8.0_amd64.deb`<br>`workbuddy-account-manager-1.8.0.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
-| **Linux** arm64 | `Qingzhu-Buddy-1.8.0-arm64.AppImage`<br>`workbuddy-account-manager_1.8.0_arm64.deb`<br>`workbuddy-account-manager-1.8.0.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
+| **Windows** x64 | `Qingzhu-Buddy-Setup-1.8.1.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
+| **macOS** Apple Silicon | `Qingzhu-Buddy-1.8.1-arm64.dmg` | ~123 MB | M 系列芯片 |
+| **macOS** Intel | `Qingzhu-Buddy-1.8.1-x64.dmg` | ~127 MB | Intel 芯片 |
+| **Linux** x64 | `Qingzhu-Buddy-1.8.1.AppImage`<br>`workbuddy-account-manager_1.8.1_amd64.deb`<br>`workbuddy-account-manager-1.8.1.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
+| **Linux** arm64 | `Qingzhu-Buddy-1.8.1-arm64.AppImage`<br>`workbuddy-account-manager_1.8.1_arm64.deb`<br>`workbuddy-account-manager-1.8.1.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
 
 > [!NOTE]
 > **Windows 提示「未知发布者」** —— 未购买代码签名证书，SmartScreen 会拦一下：点「更多信息 → 仍要运行」即可。
@@ -107,7 +125,7 @@
 > **Linux AppImage 双击没反应** —— 先给可执行权限，并确保装了 FUSE：
 >
 > ```bash
-> chmod +x Qingzhu-Buddy-1.8.0.AppImage && ./Qingzhu-Buddy-1.8.0.AppImage
+> chmod +x Qingzhu-Buddy-1.8.1.AppImage && ./Qingzhu-Buddy-1.8.1.AppImage
 > ```
 >
 > 只有安装 Windows 版需要过一次 UAC（要写 `Program Files`）；**日常运行不需要管理员权限**。
@@ -215,6 +233,7 @@
 
 | 问题 | 说明 |
 |---|---|
+| 检测更新报 403 / 检查失败怎么办？ | 旧版本才会（GitHub 接口未登录访问每小时仅 60 次，共用 IP 很容易耗尽）。升到 **v1.8.1** 后改为优先读静态页，不再受限；眼下临时要下载，直接点「检测更新」旁边的 **「GitHub 下载页」** 按钮 |
 | 能把对话搬到另一台电脑吗？ | 能。在「会话管理」里勾选对话导出成 zip 包，拷过去在目标账号的同一面板导入；可选工程路径映射，导入完清单立即刷新（v1.8.0 起） |
 | 导出的对话包和备份文件是一回事吗？ | 不是。备份是完整登录态 JSON（**含明文 token**）；对话包是 zip，装对话正文与产物、**不含登录态**，但内容本身可能敏感，同样别外传 |
 | 会重复领积分吗？ | 不会。签到是幂等的（今日已签自动跳过）；成长中心的写请求每账号每日上限 20 次，超限即停 |
@@ -237,7 +256,7 @@
 ## 🔐 安全与隐私
 
 - **纯本地运行** —— 账号库与登录态写入本机用户数据目录（`%APPDATA%/workbuddy-checkin-manager/checkin-users.json`，macOS / Linux 为对应的 `appData` 路径），**不做云端同步、不上传任何服务器**
-- **只连官方域名** —— 工具只与 WorkBuddy / CodeBuddy 官方接口通信（拉积分、签到、成长中心），外加向 GitHub 查一次版本号
+- **只连官方域名** —— 工具只与 WorkBuddy / CodeBuddy 官方接口通信（拉积分、签到、成长中心），外加向 GitHub 查版本号（v1.8.1 起只读发行页静态资源，不占接口配额、不上传任何信息）
 - **不会打印凭据** —— 日志与界面不输出 access token，账号名默认脱敏
 - **不可逆操作一律不做** —— 见上文「不可逆的只查不做」
 - ⚠️ **但导出的备份文件含明文 token**，请妥善保管，**不要外传或公开发布**
