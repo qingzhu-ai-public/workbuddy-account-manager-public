@@ -55,6 +55,25 @@
 
 ---
 
+## 🆕 v1.8.2 更新：登录态会自动续期，不再「放着放着就掉号」
+
+老版本只有**你手动点「续期登录态」那一刻**才会去续，而且判断依据是「访问令牌快到期了才续」。问题是：刷新令牌在平台侧**约 30 天不用就会作废**，而访问令牌的有效期有 60 天 —— 等你等到该续的时候，刷新令牌早就死了，点了也没用，账号直接掉。
+
+v1.8.2 改成按刷新令牌自己的年龄来续：
+
+| 做法 | 说明 |
+|---|---|
+| **自动续期** | 启动后检查一次，之后每 6 小时巡视；刷新令牌满 **15 天**就自动换新（平台侧上限约 30 天，留一倍余量） |
+| **开关可关** | 设置 →「自动续期登录态」（默认开）。关掉后就只能手动续，忘了点仍会掉号 |
+| **失败不静默** | 全部失败时明确提示「续期失败：N 个账号都续不上」，不再显示「续期完成：成功 0 / 1」 |
+| **不再拼接** | 重新登录若没带回新的刷新令牌，不会拿旧令牌硬凑成「看起来正常」的账号；旧令牌过老会直接提示需要重登 |
+| **死号不硬撞** | 平台判定刷新令牌无效时立刻标记「需重新登录」，不再每 24 小时白试一次、持续喂风控 |
+
+> [!IMPORTANT]
+> **已经失效的账号，升级后不会自己变好** —— 它们的刷新令牌已经作废，必须重新扫码登录或用 `.info` 重新导入一次。v1.8.2 保证的是「以后不会再放着放着就掉」。
+
+---
+
 ## 🆕 v1.8.1 更新：检查更新不再被 GitHub 限流
 
 老版本点「检测更新」时不时报 **403 / 检查失败**，不是功能坏了 —— 是它每次都直接问 GitHub 的接口，而未登录访问每小时只有 **60 次**额度，同一个出口 IP（公司网络、共用代理）几个人用一下就耗光了。
@@ -103,15 +122,15 @@ v1.8.1 换了数据来源：
 
 ## 📦 下载
 
-当前最新版本 **v1.8.1**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
+当前最新版本 **v1.8.2**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
 
 | 平台 | 产物 | 体积 | 说明 |
 |---|---|---|---|
-| **Windows** x64 | `Qingzhu-Buddy-Setup-1.8.1.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
-| **macOS** Apple Silicon | `Qingzhu-Buddy-1.8.1-arm64.dmg` | ~123 MB | M 系列芯片 |
-| **macOS** Intel | `Qingzhu-Buddy-1.8.1-x64.dmg` | ~127 MB | Intel 芯片 |
-| **Linux** x64 | `Qingzhu-Buddy-1.8.1.AppImage`<br>`workbuddy-account-manager_1.8.1_amd64.deb`<br>`workbuddy-account-manager-1.8.1.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
-| **Linux** arm64 | `Qingzhu-Buddy-1.8.1-arm64.AppImage`<br>`workbuddy-account-manager_1.8.1_arm64.deb`<br>`workbuddy-account-manager-1.8.1.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
+| **Windows** x64 | `Qingzhu-Buddy-Setup-1.8.2.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
+| **macOS** Apple Silicon | `Qingzhu-Buddy-1.8.2-arm64.dmg` | ~123 MB | M 系列芯片 |
+| **macOS** Intel | `Qingzhu-Buddy-1.8.2-x64.dmg` | ~127 MB | Intel 芯片 |
+| **Linux** x64 | `Qingzhu-Buddy-1.8.2.AppImage`<br>`workbuddy-account-manager_1.8.2_amd64.deb`<br>`workbuddy-account-manager-1.8.2.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
+| **Linux** arm64 | `Qingzhu-Buddy-1.8.2-arm64.AppImage`<br>`workbuddy-account-manager_1.8.2_arm64.deb`<br>`workbuddy-account-manager-1.8.2.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
 
 > [!NOTE]
 > **Windows 提示「未知发布者」** —— 未购买代码签名证书，SmartScreen 会拦一下：点「更多信息 → 仍要运行」即可。
@@ -125,7 +144,7 @@ v1.8.1 换了数据来源：
 > **Linux AppImage 双击没反应** —— 先给可执行权限，并确保装了 FUSE：
 >
 > ```bash
-> chmod +x Qingzhu-Buddy-1.8.1.AppImage && ./Qingzhu-Buddy-1.8.1.AppImage
+> chmod +x Qingzhu-Buddy-1.8.2.AppImage && ./Qingzhu-Buddy-1.8.2.AppImage
 > ```
 >
 > 只有安装 Windows 版需要过一次 UAC（要写 `Program Files`）；**日常运行不需要管理员权限**。
@@ -234,6 +253,8 @@ v1.8.1 换了数据来源：
 | 问题 | 说明 |
 |---|---|
 | 检测更新报 403 / 检查失败怎么办？ | 旧版本才会（GitHub 接口未登录访问每小时仅 60 次，共用 IP 很容易耗尽）。升到 **v1.8.1** 后改为优先读静态页，不再受限；眼下临时要下载，直接点「检测更新」旁边的 **「GitHub 下载页」** 按钮 |
+| 账号为什么放着放着就失效了？ | 登录态里的**刷新令牌**在平台侧约 **30 天不用就会作废**，比访问令牌的 60 天有效期短得多。v1.8.2 起会自动续期（刷新令牌满 15 天换一次，每 6 小时检查）。**已经失效的号只能重新扫码登录**，升级也救不回来 |
+| 「自动续期登录态」要不要关掉？ | 一般不用关，默认就是开的。关掉后只能手动点「续期登录态」，忘了点账号就会在约 30 天后失效。除非你刻意要让某台机器完全不碰令牌，否则保持开启 |
 | 能把对话搬到另一台电脑吗？ | 能。在「会话管理」里勾选对话导出成 zip 包，拷过去在目标账号的同一面板导入；可选工程路径映射，导入完清单立即刷新（v1.8.0 起） |
 | 导出的对话包和备份文件是一回事吗？ | 不是。备份是完整登录态 JSON（**含明文 token**）；对话包是 zip，装对话正文与产物、**不含登录态**，但内容本身可能敏感，同样别外传 |
 | 会重复领积分吗？ | 不会。签到是幂等的（今日已签自动跳过）；成长中心的写请求每账号每日上限 20 次，超限即停 |
