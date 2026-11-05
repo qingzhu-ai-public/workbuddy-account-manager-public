@@ -6,7 +6,7 @@
 
 **多账号，用一扇窗管清楚。**
 
-把多个 WorkBuddy / CodeBuddy 账号收进一张表 —— 自动签到、自动刷新积分、自动跑成长中心，要切账号一键搞定。
+把多个 WorkBuddy / CodeBuddy 账号收进一张表 —— 自动签到、自动刷新积分、自动跑成长中心，要切账号一键搞定，对话还能跨电脑导出导入。
 
 [![版本](https://img.shields.io/github/v/release/qingzhu-ai-public/workbuddy-account-manager-public?style=flat&logo=github&logoColor=white&label=%E7%89%88%E6%9C%AC&color=1F6FEB)](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)
 [![下载量](https://img.shields.io/github/downloads/qingzhu-ai-public/workbuddy-account-manager-public/total?style=flat&logo=github&logoColor=white&label=%E4%B8%8B%E8%BD%BD&color=10B981)](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases)
@@ -44,27 +44,56 @@
 | 🛡️ | **不可逆的只查不做** —— 连登兑换 / 盲盒抽奖 / 补登卡只查状态并提示，**绝不代为发出** |
 | 🔍 | **可用性检测** —— 查积分时附带发 hi 心跳，正常回复即判定可用；也支持手动批量实查 |
 | 🔀 | **一键切换登录态** —— 切换前自动备份原登录态、支持回滚；CodeBuddy 走 Electron safeStorage 解密，切完自动重启 |
-| 🚀 | **任务接力** —— 勾选多个账号投入一个大目标，交给 CodeBuddy CLI 无人值守执行；某个账号积分耗尽时**自动换下一个账号接着跑**，进度写入共享的 `progress.md` 跨账号续传 |
+| 🚀 | **任务接力** —— 勾选多个账号投入一个大目标，交给 CodeBuddy CLI 无人值守执行；某个账号积分耗尽时**自动换下一个账号接着跑**，进度写入共享的 `progress.md` 跨账号续传（**v1.8.0 起入口暂时下线**，见下方说明） |
 | 🧩 | **接力 · 一键装 CLI** —— 本机没装 CodeBuddy CLI 时，接力页的徽标就是安装入口，点开弹框即可安装（官方安装器免 Node / npm 两条路），装完自动识别 |
 | ⏯️ | **接力 · 中断即续** —— 任何原因中断后点「继续」即可在原任务上接着跑；也能直接在输出底部的输入框补一句话，让 AI 在原任务上迭代，**不必重开任务**。实时输出显示当前执行账号（可复制），并按每轮积分差值实算消耗 |
 | 🪟 | **会话状态监听 + 悬浮监视** —— 置顶小窗常驻显示 WB / CB 两侧**正在跑**的会话，可切大小模式、跟随深浅主题、一键停用；后台任务不会被误判成已结束 |
 | 💾 | **导出 / 导入备份** —— 完整登录态 JSON，换电脑一步搬过去 |
+| 📤 | **对话导出导入（跨电脑迁移）** —— 在「会话管理」面板勾选对话导出成标准 `zip` 包，拷到另一台电脑后导入到任意账号；可选工程路径映射，目标已有同一条对话时覆盖旧副本，导入完成清单立即刷新（详见下方 v1.8.0 专章） |
 | 🔒 | **纯本地** —— 账号与登录态只写在你自己的电脑上，没有云端同步 |
 | 🔔 | **更新检查 + 应用内更新** —— 有新版本时侧栏亮起徽标；可直接在应用内下载安装（弹框选方式、显示进度、随时取消），也可跳转下载页手动装 |
 
 ---
 
+## 🆕 v1.8.0 新功能：对话导出导入（跨电脑迁移）
+
+以前「切换账号」时可以把对话一并带到另一个账号；现在可以把某个账号的**对话打包带走**，在另一台电脑导入到任意账号名下 —— 换电脑、重装、把工作从笔记本挪到台式机，都不用丢聊天记录和上下文。
+
+**怎么用**
+
+| 步骤 | 操作 |
+|---|---|
+| 1️⃣ 导出 | 在账号行点「会话管理」→ 勾选要带走的对话 → 点 **「导出所选」**，保存为一个标准 `.zip` 包 |
+| 2️⃣ 拷贝 | 把 zip 拷到目标电脑（U 盘 / 网盘 / 任意方式，纯本地文件，不经过服务器） |
+| 3️⃣ 导入 | 在目标账号的「会话管理」面板点 **「导入对话」** → 选 zip → 预览清单与冲突、按需映射工程 → 勾选 → **「导入所选」** |
+| 4️⃣ 完成 | 导入结束面板**立即刷新**，新对话直接出现在清单里，可以马上接着聊 |
+
+**几个关键设计**
+
+- **两套归档互不串用**：WorkBuddy 打的是 sqlite 会话行 + `jsonl` 正文 + 会话产物，CodeBuddy IDE 打的是会话文件树与索引；导入时校验客户端类型，拿错包会拒绝并提示。
+- **工程路径可映射**：目标电脑没有原来的工程目录时，导入预览里可把它映射到本机已有工程；不映射也能导进去，只是续聊需要那个目录存在。
+- **同一条对话不堆叠**：目标账号已有同一条对话时按「覆盖旧副本」处理 —— 先复制新份，成功后才删旧副本并留档，中途失败不会两头落空。
+- **归属目标账号**：导入会生成新的会话 id，不会把源账号的 uid 或登录态带过来。
+- **安全边界**：标准 zip + `manifest.json`，逐文件 sha256 与字节数校验、路径穿越（zip-slip）防护、版本闸门、逐条隔离；某一条坏了不影响其它对话，全程留备份。
+
+> [!TIP]
+> **和「导出 / 导入备份」不是一回事**：备份是完整登录态 JSON（含明文 token），用来搬账号；对话包是 zip，装的是对话正文与产物，**不含登录态**。两者搭配就是「账号 + 对话」整套搬家。
+>
+> 导入 **CodeBuddy IDE** 的会话包前请先保存工作：导入会关闭 CodeBuddy 客户端，避免它退出时把索引写回去覆盖导入结果。
+
+---
+
 ## 📦 下载
 
-当前最新版本 **v1.5.0**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
+当前最新版本 **v1.8.0**。全部安装包都在 [Releases 页](https://github.com/qingzhu-ai-public/workbuddy-account-manager-public/releases/latest)，按平台挑一个即可：
 
 | 平台 | 产物 | 体积 | 说明 |
 |---|---|---|---|
-| **Windows** x64 | `Qingzhu-Buddy-Setup-1.5.0.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
-| **macOS** Apple Silicon | `Qingzhu-Buddy-1.5.0-arm64.dmg` | ~123 MB | M 系列芯片 |
-| **macOS** Intel | `Qingzhu-Buddy-1.5.0-x64.dmg` | ~127 MB | Intel 芯片 |
-| **Linux** x64 | `Qingzhu-Buddy-1.5.0.AppImage`<br>`workbuddy-account-manager_1.5.0_amd64.deb`<br>`workbuddy-account-manager-1.5.0.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
-| **Linux** arm64 | `Qingzhu-Buddy-1.5.0-arm64.AppImage`<br>`workbuddy-account-manager_1.5.0_arm64.deb`<br>`workbuddy-account-manager-1.5.0.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
+| **Windows** x64 | `Qingzhu-Buddy-Setup-1.8.0.exe` | ~105 MB | NSIS 安装向导，自动创建桌面与开始菜单快捷方式 |
+| **macOS** Apple Silicon | `Qingzhu-Buddy-1.8.0-arm64.dmg` | ~123 MB | M 系列芯片 |
+| **macOS** Intel | `Qingzhu-Buddy-1.8.0-x64.dmg` | ~127 MB | Intel 芯片 |
+| **Linux** x64 | `Qingzhu-Buddy-1.8.0.AppImage`<br>`workbuddy-account-manager_1.8.0_amd64.deb`<br>`workbuddy-account-manager-1.8.0.x86_64.rpm` | ~119 / 95 / 85 MB | AppImage 免安装 |
+| **Linux** arm64 | `Qingzhu-Buddy-1.8.0-arm64.AppImage`<br>`workbuddy-account-manager_1.8.0_arm64.deb`<br>`workbuddy-account-manager-1.8.0.aarch64.rpm` | ~121 / 90 / 80 MB | 树莓派 / ARM 服务器 |
 
 > [!NOTE]
 > **Windows 提示「未知发布者」** —— 未购买代码签名证书，SmartScreen 会拦一下：点「更多信息 → 仍要运行」即可。
@@ -78,7 +107,7 @@
 > **Linux AppImage 双击没反应** —— 先给可执行权限，并确保装了 FUSE：
 >
 > ```bash
-> chmod +x Qingzhu-Buddy-1.5.0.AppImage && ./Qingzhu-Buddy-1.5.0.AppImage
+> chmod +x Qingzhu-Buddy-1.8.0.AppImage && ./Qingzhu-Buddy-1.8.0.AppImage
 > ```
 >
 > 只有安装 Windows 版需要过一次 UAC（要写 `Program Files`）；**日常运行不需要管理员权限**。
@@ -156,6 +185,9 @@
 
 ## 🚀 任务接力：用多个账号的积分，跑完一个大目标
 
+> [!WARNING]
+> **本节描述的能力自 v1.8.0 起暂时下线**：平台对「token 注入官方 CLI + 多账号无人值守轮换」的风控收紧，为避免连累整个账号池，入口已关闭（代码保留，随时可恢复）。当前版本里看不到这个入口，以下内容仅作历史说明。
+
 手上账号很多、单个额度又不够干一件大事（写一个完整项目、跑一批重构、做一轮长调研）？**任务接力**就是为这个场景做的：
 
 | | 能力 |
@@ -183,6 +215,8 @@
 
 | 问题 | 说明 |
 |---|---|
+| 能把对话搬到另一台电脑吗？ | 能。在「会话管理」里勾选对话导出成 zip 包，拷过去在目标账号的同一面板导入；可选工程路径映射，导入完清单立即刷新（v1.8.0 起） |
+| 导出的对话包和备份文件是一回事吗？ | 不是。备份是完整登录态 JSON（**含明文 token**）；对话包是 zip，装对话正文与产物、**不含登录态**，但内容本身可能敏感，同样别外传 |
 | 会重复领积分吗？ | 不会。签到是幂等的（今日已签自动跳过）；成长中心的写请求每账号每日上限 20 次，超限即停 |
 | 点「更新」会顺带签到吗？ | 不会。「更新」只查积分 / 权益 / 连签 / 可用性，签到要靠手动点或自动签到，两者分开 |
 | 「查可用」会消耗积分吗？ | **会。** 它打的是 `console/accounts` 预检接口，本身有成本 —— 所以每个账号**每天最多实查一次**，当天查过的读缓存。请按需使用，别反复点 |
@@ -207,6 +241,7 @@
 - **不会打印凭据** —— 日志与界面不输出 access token，账号名默认脱敏
 - **不可逆操作一律不做** —— 见上文「不可逆的只查不做」
 - ⚠️ **但导出的备份文件含明文 token**，请妥善保管，**不要外传或公开发布**
+- 🔐 **对话导出包不含登录态**，但里面是完整对话正文与会话产物，按同样的谨慎程度保管
 
 ---
 
